@@ -1,6 +1,6 @@
 # Go + Templ + HTMX + SQLite
 
-CRUD operations in a SQLite DB in Go, using an HTMX front-end
+CRUD operations in a SQLite DB using Go, with an HTMX front-end
 
 ## References
 

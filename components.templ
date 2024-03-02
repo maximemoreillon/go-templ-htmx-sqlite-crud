@@ -24,28 +24,36 @@ templ HeadComponent() {
 
 
 templ MovieDeleteButton (movie Movie) {
-<button 
-  hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
-  hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
-  hx-swap="delete">
-  Delete
-</button>
+  <button 
+    hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
+    hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
+    hx-swap="delete">
+    Delete
+  </button>
 }
 
 templ MovieComponent(movie Movie) {
-  <div id={fmt.Sprintf("movie_%s",strconv.Itoa(movie.ID))}>
-    [{strconv.Itoa(movie.ID)}] {movie.Title} ({strconv.Itoa(movie.Year)})
+  <form 
+    id={fmt.Sprintf("movie_%s",strconv.Itoa(movie.ID))}
+    hx-put={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
+    hx-swap="none">
+
+    <label>Title: <input type="text" name="title" value={movie.Title}/></label>
+    <label>Year: <input type="year" name="year" value={strconv.Itoa(movie.Year)}/></label>
+    <button type="submit">Update</button>
+
     @MovieDeleteButton(movie)
-  </div>
+  </form>
 }
 
 
 templ NewMovieForm () {
-<form hx-post="/movies/" hx-target="#moviesList" hx-swap="afterend">
+  <h2>Add a movie</h2>
+  <form hx-post="/movies/" hx-target="#moviesList" hx-swap="afterend">
     <label>Title: <input type="text" name="title" /></label>
     <label>Year: <input type="number" name="year" /></label>
     <input type="submit" />
-</form>
+  </form>
 }
 
 templ MoviesPage(movies []Movie) {
@@ -54,6 +62,7 @@ templ MoviesPage(movies []Movie) {
 		<body>
 			<h1>Movies</h1>
       @NewMovieForm()
+      <h2>Registered movies</h2>
       <div id="moviesList">
         for _, item := range movies {
           @MovieComponent(item)
@@ -62,6 +71,7 @@ templ MoviesPage(movies []Movie) {
 		</body>
 	</html>
 }
+
 
 templ MoviePage(movie Movie) {
   <html>
