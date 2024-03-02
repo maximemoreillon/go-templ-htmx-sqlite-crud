@@ -1,0 +1,75 @@
+package main
+
+import (
+  "fmt"
+  "strconv"
+)
+
+templ HeadComponent() {
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Go + Templ + HTMX</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+    body {
+      background-color: #222222;
+      color: #eeeeee;
+      font-family: Arial;
+    }
+    </style>
+  </head>
+}
+
+
+
+templ MovieDeleteButton (movie Movie) {
+<button 
+  hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
+  hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
+  hx-swap="delete">
+  Delete
+</button>
+}
+
+templ MovieComponent(movie Movie) {
+  <div id={fmt.Sprintf("movie_%s",strconv.Itoa(movie.ID))}>
+    [{strconv.Itoa(movie.ID)}] {movie.Title} ({strconv.Itoa(movie.Year)})
+    @MovieDeleteButton(movie)
+  </div>
+}
+
+
+templ NewMovieForm () {
+<form hx-post="/movies/" hx-target="#moviesList" hx-swap="afterend">
+    <label>Title: <input type="text" name="title" /></label>
+    <label>Year: <input type="number" name="year" /></label>
+    <input type="submit" />
+</form>
+}
+
+templ MoviesPage(movies []Movie) {
+  <html>
+		@HeadComponent()
+		<body>
+			<h1>Movies</h1>
+      @NewMovieForm()
+      <div id="moviesList">
+        for _, item := range movies {
+          @MovieComponent(item)
+        }
+      </div>
+		</body>
+	</html>
+}
+
+templ MoviePage(movie Movie) {
+  <html>
+		@HeadComponent()
+		<body>
+      <h1>{movie.Title}</h1>
+      <div>{strconv.Itoa(movie.Year)}</div>
+		</body>
+	</html>
+}
+
