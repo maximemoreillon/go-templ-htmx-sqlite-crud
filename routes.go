@@ -39,13 +39,15 @@ func handleMovieDelete(w http.ResponseWriter, r *http.Request, db *sql.DB, id in
 
 func handleMovies(db *sql.DB) http.HandlerFunc {
 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
-		idString := strings.TrimPrefix(r.URL.Path, "/movies/")
 		// Not sure if this is the right way
+		// Will be fixed with Go 1.22 using /movies/{id}
+		
+		idString := strings.TrimPrefix(r.URL.Path, "/movies/")
 		if idString == "" {
 			switch r.Method {
-			case "POST" :
+			case http.MethodPost :
 				handleMoviesPost(w,r,db)
-			case "GET" :
+			case http.MethodGet :
 				handleMoviesGet(w,r,db)
 			default:
 				fmt.Fprintf(w,"Cannot %s /movies", r.Method)
@@ -56,11 +58,11 @@ func handleMovies(db *sql.DB) http.HandlerFunc {
 				panic(err)
 			}
 			switch r.Method {
-			case "GET" :
+			case http.MethodGet :
 				handleMovieGet(w,r,db,id)
-			case "PUT" :
+			case http.MethodPut :
 				handleMoviePut(w, r, db, id)
-			case "DELETE" :
+			case http.MethodDelete :
 				handleMovieDelete(w,r,db,id)
 				
 			default:
