@@ -5,32 +5,6 @@ import (
   "strconv"
 )
 
-templ HeadComponent() {
-  <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Go + Templ + HTMX</title>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <style>
-    body {
-      background-color: #222222;
-      color: #eeeeee;
-      font-family: Arial;
-    }
-    </style>
-  </head>
-}
-
-
-
-templ MovieDeleteButton (movie Movie) {
-  <button 
-    hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
-    hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
-    hx-swap="delete">
-    Delete
-  </button>
-}
 
 templ MovieEditComponent(movie Movie) {
   <form 
@@ -47,7 +21,12 @@ templ MovieEditComponent(movie Movie) {
       hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}>
       Cancel
     </button>
-    @MovieDeleteButton(movie)
+    <button 
+      hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
+      hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
+      hx-swap="delete">
+      Delete
+    </button>
   </form>
 }
 
@@ -66,7 +45,19 @@ templ NewMovieForm () {
 
 templ MoviesPage(movies []Movie) {
   <html>
-		@HeadComponent()
+		<head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Go + Templ + HTMX</title>
+      <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+      <style>
+      body {
+        background-color: #222222;
+        color: #eeeeee;
+        font-family: Arial;
+      }
+      </style>
+    </head>
 		<body>
 			<h1>Movies</h1>
       @NewMovieForm()
