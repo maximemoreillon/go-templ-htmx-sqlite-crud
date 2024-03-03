@@ -52,16 +52,18 @@ func readMovie (db *sql.DB, id int) Movie {
 
 
 
-func updateMovie (db *sql.DB, id int, newTitle string, newYear int) {
+func updateMovie (db *sql.DB, id int, newTitle string, newYear int) Movie {
 	update := `
 	UPDATE movies 
 	SET title=?, year=? 
 	WHERE id=?`
 
-	_, upErr := db.Exec(update, newTitle, newYear, id)
-	if upErr != nil {
-		panic(upErr)
+	_, err := db.Exec(update, newTitle, newYear, id)
+	if err != nil {
+		panic(err)
 	}
+
+	return readMovie(db,id)
 }
 
 func deleteMovie  (db *sql.DB, id int) {

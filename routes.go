@@ -23,25 +23,31 @@ func handleMoviesGet(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 func handleMovieGet(w http.ResponseWriter, r *http.Request, db *sql.DB, id int) {
 	movie := readMovie(db, id)
-	MoviePage(movie).Render(r.Context(),w)
+	MovieComponent(movie).Render(r.Context(),w)
 }
 
 func handleMoviePut(w http.ResponseWriter, r *http.Request, db *sql.DB, id int) {
 	r.ParseForm()
 	title := r.Form.Get("title")
 	year, _ := strconv.Atoi(r.Form.Get("year"))
-	updateMovie(db, id, title, year)
+	updatedMovie := updateMovie(db, id, title, year)
+	MovieComponent(updatedMovie).Render(r.Context(),w)
 }
 
 func handleMovieDelete(w http.ResponseWriter, r *http.Request, db *sql.DB, id int){
 	deleteMovie(db, id)
 }
 
+func handleMovieEditGet(w http.ResponseWriter, r *http.Request, db *sql.DB, id int){
+	movie := readMovie(db, id)
+	MovieEditComponent(movie).Render(r.Context(),w)
+}
+
 func handleMovies(db *sql.DB) http.HandlerFunc {
 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
 		// Not sure if this is the right way
 		// Will be fixed with Go 1.22 using /movies/{id}
-		
+
 		idString := strings.TrimPrefix(r.URL.Path, "/movies/")
 		if idString == "" {
 			switch r.Method {
@@ -52,7 +58,20 @@ func handleMovies(db *sql.DB) http.HandlerFunc {
 			default:
 				fmt.Fprintf(w,"Cannot %s /movies", r.Method)
 			}
+		} else if strings.Contains(idString, "/edit") {
+			id, err := strconv.Atoi(strings.TrimSuffix(idString, "/edit"))
+			if err != nil {
+				panic(err)
+			}
+			
+			switch r.Method {
+			case http.MethodGet :
+				handleMovieEditGet(w,r,db,id)
+			default:
+				fmt.Fprintf(w,"Cannot %s /movies", r.Method)
+			}
 		} else {
+
 			id, err := strconv.Atoi(idString)
 			if err != nil {
 				panic(err)

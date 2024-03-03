@@ -32,11 +32,12 @@ templ MovieDeleteButton (movie Movie) {
   </button>
 }
 
-templ MovieComponent(movie Movie) {
+templ MovieEditComponent(movie Movie) {
   <form 
     id={fmt.Sprintf("movie_%s",strconv.Itoa(movie.ID))}
     hx-put={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
-    hx-swap="none">
+    hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
+    >
 
     <label>Title: <input type="text" name="title" value={movie.Title}/></label>
     <label>Year: <input type="year" name="year" value={strconv.Itoa(movie.Year)}/></label>
@@ -49,7 +50,10 @@ templ MovieComponent(movie Movie) {
 
 templ NewMovieForm () {
   <h2>Add a movie</h2>
-  <form hx-post="/movies/" hx-target="#moviesList" hx-swap="afterend">
+  <form 
+    hx-post="/movies/" 
+    hx-target="#moviesList" 
+    hx-swap="afterend">
     <label>Title: <input type="text" name="title" /></label>
     <label>Year: <input type="number" name="year" /></label>
     <input type="submit" />
@@ -73,13 +77,17 @@ templ MoviesPage(movies []Movie) {
 }
 
 
-templ MoviePage(movie Movie) {
-  <html>
-		@HeadComponent()
-		<body>
-      <h1>{movie.Title}</h1>
-      <div>{strconv.Itoa(movie.Year)}</div>
-		</body>
-	</html>
+templ MovieComponent(movie Movie) {
+  <div id={fmt.Sprintf("movie_%s",strconv.Itoa(movie.ID))}>
+    [{strconv.Itoa(movie.ID)}]
+    {movie.Title}
+    ({strconv.Itoa(movie.Year)})
+    <button
+      hx-get={fmt.Sprintf("/movies/%s/edit",strconv.Itoa(movie.ID))}
+      hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
+    >
+      Edit
+    </button>
+  </div>
 }
 
