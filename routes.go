@@ -45,8 +45,7 @@ func handleMovieEditGet(w http.ResponseWriter, r *http.Request, db *sql.DB, id i
 
 func handleMovies(db *sql.DB) http.HandlerFunc {
 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
-		// Not sure if this is the right way
-		// Will be fixed with Go 1.22 using /movies/{id}
+		// Would be improved with Go 1.22 using /movies/{id}
 
 		idString := strings.TrimPrefix(r.URL.Path, "/movies/")
 		if idString == "" {
@@ -59,7 +58,8 @@ func handleMovies(db *sql.DB) http.HandlerFunc {
 				fmt.Fprintf(w,"Cannot %s /movies", r.Method)
 			}
 		} else if strings.Contains(idString, "/edit") {
-			id, err := strconv.Atoi(strings.TrimSuffix(idString, "/edit"))
+			idString = strings.TrimSuffix(idString, "/edit")
+			id, err := strconv.Atoi(idString)
 			if err != nil {
 				panic(err)
 			}
