@@ -12,15 +12,22 @@ templ MovieEditComponent(movie Movie) {
     hx-put={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
     hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}
     >
+    
     <label>ID: <input type="numer" value={strconv.Itoa(movie.ID)} readonly/></label>
     <label>Title: <input type="text" name="title" value={movie.Title}/></label>
     <label>Year: <input type="number" name="year" value={strconv.Itoa(movie.Year)}/></label>
+
+    <!-- Submit -->
     <button type="submit">Update</button>
+
+    <!-- Cancel -->
     <button 
       hx-get={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
       hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}>
       Cancel
     </button>
+
+    <!-- Delete -->
     <button 
       hx-delete={fmt.Sprintf("/movies/%s",strconv.Itoa(movie.ID))}
       hx-target={fmt.Sprintf("#movie_%s",strconv.Itoa(movie.ID))}

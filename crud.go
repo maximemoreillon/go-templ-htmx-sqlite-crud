@@ -18,9 +18,7 @@ func createMovie (db *sql.DB, title string, year int) Movie {
 		panic(err)
 	}
 
-	newMovie.ID = int(id)
-
-	return newMovie
+	return readMovie(db, int(id))
 }
 
 
