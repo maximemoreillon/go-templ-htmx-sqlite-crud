@@ -27,5 +27,10 @@ func main () {
 	mux.Handle("DELETE /movies/{id}", handleMovieDelete(db))
 	mux.Handle("GET /movies/{id}/edit", handleMoviesEditGet(db))
 	
-	http.ListenAndServe(":8081", mux)
+	err := http.ListenAndServe(":8080", mux)
+
+	if err != nil {
+		panic(err)
+	}
+
 }
