@@ -28,7 +28,6 @@ func readMovies (db *sql.DB) ([]Movie, error) {
 	for rows.Next() {
 		movie := Movie{}
 		err = rows.Scan(&movie.ID, &movie.Title, &movie.Year)
-		// TODO: break out of the loop with error
 		if err != nil {
 			break
 		}
