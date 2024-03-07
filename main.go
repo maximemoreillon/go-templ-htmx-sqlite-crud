@@ -20,6 +20,7 @@ func main () {
 	createTableIfNotExists(db)
 	mux := http.NewServeMux()
 
+	mux.Handle("GET /", handleMoviesGet(db))
 	mux.Handle("GET /movies/", handleMoviesGet(db))
 	mux.Handle("POST /movies/", handleMoviesPost(db))
 	mux.Handle("GET /movies/{id}", handleMovieGet(db))

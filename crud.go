@@ -6,37 +6,35 @@ import (
 
 
 
-func createMovie (db *sql.DB, title string, year int) Movie {
+func createMovie (db *sql.DB, title string, year int) (Movie, error) {
 	newMovie := Movie{0, title, year}
-	res ,err := db.Exec("INSERT INTO movies VALUES(null,?,?);", newMovie.Title, newMovie.Year)
+	res, err := db.Exec("INSERT INTO movies VALUES(null,?,?);", newMovie.Title, newMovie.Year)
 	if err != nil {
-		panic(err)
+		return newMovie, err
 	}
-
 	id, err := res.LastInsertId()
-	if err != nil {
-		panic(err)
-	}
-
-	return readMovie(db, int(id))
+	return readMovie(db, int(id)), err
 }
 
 
-func readMovies (db *sql.DB) []Movie {
+func readMovies (db *sql.DB) ([]Movie, error) {
 	movies := []Movie {}
 	rows, err := db.Query("SELECT * FROM movies ORDER BY id DESC LIMIT 100")
+
 	if err != nil {
-		panic(err)
+		return []Movie{}, err
 	}
+	
 	for rows.Next() {
 		movie := Movie{}
 		err = rows.Scan(&movie.ID, &movie.Title, &movie.Year)
+		// TODO: break out of the loop with error
 		if err != nil {
-			panic(err)
+			break
 		}
 		movies = append(movies, movie)
 	}
-	return movies
+	return movies, err
 }
 
 func readMovie (db *sql.DB, id int) Movie {
@@ -50,23 +48,18 @@ func readMovie (db *sql.DB, id int) Movie {
 
 
 
-func updateMovie (db *sql.DB, id int, newTitle string, newYear int) Movie {
+func updateMovie (db *sql.DB, id int, newTitle string, newYear int) (Movie, error) {
 	update := `
 	UPDATE movies 
 	SET title=?, year=? 
 	WHERE id=?`
 
 	_, err := db.Exec(update, newTitle, newYear, id)
-	if err != nil {
-		panic(err)
-	}
 
-	return readMovie(db,id)
+	return readMovie(db,id), err
 }
 
-func deleteMovie  (db *sql.DB, id int) {
+func deleteMovie  (db *sql.DB, id int) error {
 	_, err := db.Exec("DELETE FROM movies WHERE id=?;", id)
-	if err != nil {
-		panic(err)
-	}
+	return err
 }
